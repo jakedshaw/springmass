@@ -39,10 +39,10 @@ def euler_pos_vel(s1, s2, t):
     """Generates the position and velocity vectors"""
     i = 0
     while i < t.sn-1:
-        x1 = s1.x[:,i] + s1.v[:,i] * t.dt
-        v1 = s1.v[:,i] + ode1(s1, s2, i) * t.dt
-        x2 = s2.x[:,i] + s2.v[:,i] * t.dt
-        v2 = s2.v[:,i] + ode2(s1, s2, i) * t.dt
+        x1 = s1.x[:, i] + s1.v[:, i] * t.dt
+        v1 = s1.v[:, i] + ode1(s1, s2, i) * t.dt
+        x2 = s2.x[:, i] + s2.v[:, i] * t.dt
+        v2 = s2.v[:, i] + ode2(s1, s2, i) * t.dt
         s1.x = np.append(s1.x, np.array(([x1[0]], [x1[1]])), axis=1)
         s1.v = np.append(s1.v, np.array(([v1[0]], [v1[1]])), axis=1)
         s2.x = np.append(s2.x, np.array(([x2[0]], [x2[1]])), axis=1)
@@ -70,18 +70,20 @@ def plot_ani(s1, s2, t):
     for i in np.arange(sn):
         x = (0, s1.x[0, i*50], s2.x[0, i*50] + s2.x0)
         y = (0, s1.x[1, i*50], s2.x[1, i*50] + s2.y0)
-        temp_plot = ax.scatter(x, y, c='black')
+        frame = ax.scatter(x, y, c='black')
+        frame2, = ax.plot(x, y, c='black')
         plt.draw()
         plt.pause(0.05)
-        temp_plot.remove()
+        frame.remove()
+        frame2.remove()
 
 
 def plot(s1, s2, t):
     """Generates First Plot"""
 
     n = plt.subplot(3, 1, 1, projection='3d') # North Plot
-    n.plot3D(t.time, s1.x[0,:], s1.x[1,:], label='Spring 1')
-    n.plot3D(t.time, s2.x[0,:] + s2.x0, s2.x[1,:] + s2.y0, label='Spring 2')
+    n.plot3D(t.time, s1.x[0, :], s1.x[1, :], label='Spring 1')
+    n.plot3D(t.time, s2.x[0, :] + s2.x0, s2.x[1, :] + s2.y0, label='Spring 2')
     n.set(xlabel='time (s)', ylabel='x position (m)', zlabel='y position (m)', title='Spring Oscillation in two Dimensions')
 
     m = plt.subplot(3, 1, 2) # Middle Plot
@@ -94,5 +96,5 @@ def plot(s1, s2, t):
     s.plot(t.time, s2.x[0, :] + s2.x0, label='Spring 2')
     s.set(xlabel='time (s)', ylabel='x position (m)')
 
-    plt.savefig('springmass_1.png')
+    plt.savefig('springmass.png')
     plt.show()
