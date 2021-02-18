@@ -61,6 +61,24 @@ def ode2(s1, s2, i):
     return -s2.k * (hypot(s2.x[0, i] - s1.x[0, i], s2.x[1, i] - s1.x[1, i]) - s2.l) * (s2.x[:, i] - s1.x[:, i]) / (s2.m * hypot(s2.x[0, i] - s1.x[0, i], s2.x[1, i] - s1.x[1, i])) + np.array([0, -9.81])
 
 
+def get_num():
+    """Gets last image number, adds one, writes and returns the number"""
+    filename = 'assets/imgnum'
+    num = np.loadtxt(filename)
+    num += 1
+    number = np.array([int(num)])
+    np.savetxt(filename, number)
+    return int(num)
+
+
+def reset_num():
+    """Resets and prints the image number"""
+    filename = 'assets/imgnum'
+    num = np.array([0])
+    np.savetxt(filename, num)
+    print(int(np.loadtxt(filename)))
+
+
 def plot_ani(s1, s2, t):
     """Generates Second Plot - Animated"""
     fig, ax = plt.subplots(num='Animated Plot')
@@ -96,5 +114,6 @@ def plot(s1, s2, t):
     s.plot(t.time, s2.x[0, :] + s2.x0, label='Spring 2')
     s.set(xlabel='time (s)', ylabel='x position (m)')
 
-    plt.savefig('springmass.png')
+    number = get_num()
+    plt.savefig(f'assets/springmass_{number}.png')
     plt.show()

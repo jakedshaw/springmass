@@ -1,17 +1,13 @@
 import springmass as spring
 
+
 def run_prog():
     """Runs Simulation"""
     # Initial Conditions
-    #print('Careful with values!
-    #print('M 1 in kg = ', end='')
-    M1 = 2 #int(input())
-    #print('k 1 in N/m = ', end='')
-    k1 = 20 #int(input())
-    #print('M 2 in kg = ', end='')
-    M2 = 1 #int(input())
-    #print('k 2 in N/m = ', end='')
-    k2 = 15 #int(input())
+    M1 = 0.7500  # kg
+    k1 = 20.000  # N/m
+    M2 = 0.5000  # kg
+    k2 = 20.000  # N/m
     print('Time in sec = ', end='')
     sec = int(input())
     dt = 0.001
