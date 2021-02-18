@@ -1,6 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from math import hypot
+from os import system
 
 class Spring():
     """A Spring Class"""
@@ -75,8 +76,10 @@ def reset_num():
     """Resets and prints the image number"""
     filename = 'assets/imgnum'
     num = np.array([0])
+    system('rm -r assets')
+    system('mkdir assets')
     np.savetxt(filename, num)
-    print(int(np.loadtxt(filename)))
+
 
 
 def plot_ani(s1, s2, t):

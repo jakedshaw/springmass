@@ -27,5 +27,13 @@ def run_prog():
     spring.plot_ani(s1, s2, t)
     spring.plot(s1, s2, t)
 
+    print('New Simulation? (y/n) ', end='')
+    if input() == 'y':
+        run_prog()
+    print('Reset Images (y/n) ', end='')
+    if input() == 'y':
+        spring.reset_num()
+    quit()
+
 if __name__ == '__main__':
     run_prog()
