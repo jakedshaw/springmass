@@ -1,4 +1,6 @@
 from os import system, walk
+import calculations as calc
+import pandas as pd
 import data
 import main
 
@@ -12,15 +14,13 @@ def simulation_time():
     try:
         print('Run for how many seconds? ', end='')
         sec = input()
+        clear()
         if sec < '':
-            clear()
             return simulation_time()
         sec = int(sec)
         if sec <= 0:
-            clear()
             print('Positive, Non-Zero Integers only!\n')
             return simulation_time()
-        clear()
         return sec
     except ValueError:
         clear()
@@ -38,46 +38,72 @@ def init_arr(a):
         inc1, inc2 = [1, 10.00, 2000, 3.00, 0.000, 0.000, -5.00], [2, 0.50, 2000, 0.000, 0.000, 0.00, -6.00]
     else:
         inc1, inc2 = [1, 0.500, 20.00, 0.500, 0.000, 0.00, -0.50], [2, 0.005, 1.00, 0.000, -1.00, 0.00, -2.00]
+    inc1, inc2 = calc.calc_length(inc1, inc2)
     return inc1, inc2
 
 
-def enter_data():
-    """enter custom values"""
-    inc1, inc2 = [1], [2]
-    print("Coming Soon ('b' to go back)")
-    a = input()
-    if a == 'b':
+def check_float(spring_attributes):
+    print('Careful with values! (currently a little buggy)\n\n', spring_attributes, '\n\nValue = ', end='')
+    try:
+        a = input()
         clear()
+        a = float(a)
+        return a
+    except ValueError:
+        clear()
+        return check_float(spring_attributes)
+
+
+def confirm_values(inc1, inc2, spring_attributes, set_vec):
+    print('Your Values:\n\n', spring_attributes, '\n\nHappy with values? (y/n) ', end='')
+    a = input()
+    clear()
+    if a == 'n':
+        return enter_data(set_vec)
+    elif a == 'y':
         return inc1, inc2
     else:
-        clear()
-        return enter_data()
+        return confirm_values(inc1, inc2, spring_attributes, set_vec)
 
-    print('Careful with values! (currently a little buggy)\n #   m    k     vx    vy    x     y\n')
+
+def invalid_values(inc1, inc2, set_vec):
+    try:
+        inc1, inc2 = calc.calc_length(inc1, inc2)
+        return inc1, inc2
+    except ValueError:
+        print('Invalid Values!\n\nRetry? (y/n)', end='')
+        a = input()
+        clear()
+        if a == 'y':
+            return enter_data(set_vec)
+        elif a == 'n':
+            main.select_scenario(set_vec)
+        else:
+            return invalid_values(inc1, inc2, set_vec)
+
+
+def enter_data(set_vec):
+    """enter custom values"""
+    num = (1, 2)
+    one, two = [1], [2]
+    col = ['   Mass   ', '     k     ', '    vx    ', '    vy    ', '     x    ', '     y    ']
+    inc1, inc2 = [' ', ' ', ' ', ' ', ' ', ' '], [' ', ' ', ' ', ' ', ' ', ' ']
+    spring_attributes = pd.DataFrame((inc1, inc2), index=num, columns=col)
     for i in range(2):
         print(f' {i + 1} ', end='')
         for j in range(6):
             if i == 0:
-                inc1.append(float(input()))
+                inc1[j] = check_float(spring_attributes)
+                one.append(inc1[j])
+                spring_attributes = pd.DataFrame((inc1, inc2), index=num, columns=col)
                 clear()
-                print(f'Careful with values!\n # :   m    k     vx    vy    x     y\n{inc1}', end='')
             else:
-                inc2.append(float(input()))
+                inc2[j] = check_float(spring_attributes)
+                two.append(inc2[j])
+                spring_attributes = pd.DataFrame((inc1, inc2), index=num, columns=col)
                 clear()
-                print(f'Careful with values!\n # :   m    k     vx    vy    x     y\n{inc1}\n{inc2}', end='')
-    clear()
-    print(
-        'Your Values:\n'
-        ' # :   m    k     vx    vy    x     y\n'
-        f'{inc1}\n'
-        f'{inc2}\n\n'
-        'Happy with values? (y/n) ', end=''
-    )
-
-    a = input()
-    if a == 'n':
-        inc1, inc2 = enter_data()
-    clear()
+    inc1, inc2 = confirm_values(one, two, spring_attributes, set_vec)
+    inc1, inc2 = invalid_values(inc1, inc2, set_vec)
     return inc1, inc2
 
 
@@ -96,15 +122,13 @@ def load_data(set_vec):
                 main.run_prog(set_vec)
         print('\n\nEnter Test Number: ', end='')
         num = input()
+        clear()
         if num == 'b':
-            clear()
             main.select_scenario(set_vec)
         num = int(num)
         if num >= dir_num or num < 0:
-            clear()
             print('No such file!\n')
             return load_data(set_vec)
-        clear()
         return num
     except ValueError:
         clear()
@@ -123,6 +147,7 @@ def set_time_step(set_vec):
     )
 
     a = input()
+    clear()
     if a == '0':
         set_vec[0] = 0.001
     elif a == '1':
@@ -130,12 +155,9 @@ def set_time_step(set_vec):
     elif a == '2':
         set_vec[0] = 0.000_01
     elif a == 'b':
-        clear()
         main.select_scenario(set_vec)
     else:
-        clear()
         return set_time_step(set_vec)
-    clear()
     return set_vec
 
 
@@ -150,6 +172,7 @@ def set_tails(set_vec):
     )
 
     a = input()
+    clear()
     if a == '0':
         set_vec[2] = 0
     elif a == '1':
@@ -157,19 +180,15 @@ def set_tails(set_vec):
     elif a == '2':
         set_vec[2] = 2
     elif a == 'b':
-        clear()
         main.select_scenario(set_vec)
     else:
-        clear()
         return set_tails(set_vec)
-    clear()
     return set_vec
 
 
 def init_set(set_vec):
     """Settings Screen"""
     inc1, inc2, dat_arr = [], [], 'empty'
-    # set_vec = dt, code, tails, save, plot, load, num
     print(
         "Options ('b' to go back):\n\n"
         "------------------------------------\n\n"
@@ -183,11 +202,9 @@ def init_set(set_vec):
     a = input()
     clear()
     if a == 'q':
-        clear()
         quit()
     elif a == 'e':
-        inc1, inc2 = enter_data()
-        main.select_scenario(set_vec) # Temporary
+        inc1, inc2 = enter_data(set_vec)
     elif a == 'l':
         num = load_data(set_vec)
         dat_arr = data.load_data(num)
@@ -205,7 +222,6 @@ def init_set(set_vec):
     elif a == 'b':
         main.select_scenario(set_vec)
     else:
-        clear()
         return init_set(set_vec)
     return inc1, inc2, dat_arr, set_vec
 
@@ -217,7 +233,6 @@ def main_options(set_vec):
     clear()
     dat_arr = 'empty'
     if a == 'q':
-        clear()
         quit()
     elif a == 'm':
         inc1, inc2, dat_arr, set_vec = init_set(set_vec)
@@ -226,5 +241,4 @@ def main_options(set_vec):
         inc1, inc2 = init_arr(a)
         return inc1, inc2, dat_arr, set_vec
     else:
-        print('Invalid Entry!\n')
         return main_options(set_vec)

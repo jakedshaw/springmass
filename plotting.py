@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 
 def plot_ani(s1, s2, t, save, num, tails):
     """generates animated and 3d plot"""
-    a = max([max([abs(max(s1.x[0, :] + s1.x0, key=abs)), abs(max(s2.x[0, :] + s2.x0, key=abs))]), (max([abs(max(s1.x[1, :] + s1.y0, key=abs)), abs(max(s2.x[1, :] + s2.y0, key=abs))]) / 2)])
+    a = max([max([abs(max(s1.x[0, :] + s1.x[0, 0], key=abs)), abs(max(s2.x[0, :] + s2.x[0, 0], key=abs))]), (max([abs(max(s1.x[1, :] + s1.x[1, 0], key=abs)), abs(max(s2.x[1, :] + s2.x[1, 0], key=abs))]) / 2)])
 
     fig, ax = plt.subplots(num='Animated Plot')
     ax.set(xlabel='x position (m)', ylabel='y position (m)', title='Spring Oscillation in two Dimensions', xlim=[-a, a], ylim=[-2 * a, 0])
@@ -16,8 +16,8 @@ def plot_ani(s1, s2, t, save, num, tails):
     j = []
     for i in np.arange(sn):
         i *= skip_constant
-        x = (0, s1.x[0, i] + s1.x0, s2.x[0, i] + s2.x0)
-        y = (0, s1.x[1, i] + s1.y0, s2.x[1, i] + s2.y0)
+        x = (0, s1.x[0, i] + s1.x[0, 0], s2.x[0, i] + s2.x[0, 0])
+        y = (0, s1.x[1, i] + s1.x[1, 0], s2.x[1, i] + s2.x[1, 0])
 
         if tails == 1:
             j, k = [], 1
@@ -31,8 +31,8 @@ def plot_ani(s1, s2, t, save, num, tails):
 
         f0 = ax.scatter(x, y, c='black')
         if not tails == 2:
-            f1, = ax.plot(s1.x[0, j] + s1.x0, s1.x[1, j] + s1.y0, c='#1f77b4')
-            f2, = ax.plot(s2.x[0, j] + s2.x0, s2.x[1, j] + s2.y0, c='#ff7f0e')
+            f1, = ax.plot(s1.x[0, j] + s1.x[0, 0], s1.x[1, j] + s1.x[1, 0], c='#1f77b4')
+            f2, = ax.plot(s2.x[0, j] + s2.x[0, 0], s2.x[1, j] + s2.x[1, 0], c='#ff7f0e')
         f3, = ax.plot(x, y, c='black')
         f4 = plt.figtext(.8, .8, '%.2f s' % t.time[i])
         plt.draw()
@@ -45,16 +45,15 @@ def plot_ani(s1, s2, t, save, num, tails):
         f4.remove()
 
     ax.plot(s1.x[0, j], s1.x[1, j], c='#1f77b4')
-    ax.plot(s2.x[0, :] + s2.x0, s2.x[1, :] + s2.y0, c='#ff7f0e')
+    ax.plot(s2.x[0, :] + s2.x[0, 0], s2.x[1, :] + s2.x[1, 0], c='#ff7f0e')
 
     if save == 'y':
         plt.savefig(f'trials/trial_{num}/{num}_2d_traj.png')
 
     nn = plt.subplot(projection='3d', xlim=[0, t.time[-1]])
-    nn.plot3D(t.time, s1.x[0, :] + s1.x0, s1.x[1, :] + s1.y0, label='Spring 1')
-    nn.plot3D(t.time, s2.x[0, :] + s2.x0, s2.x[1, :] + s2.y0, label='Spring 2')
+    nn.plot3D(t.time, s1.x[0, :] + s1.x[0, 0], s1.x[1, :] + s1.x[1, 0], label='Spring 1')
+    nn.plot3D(t.time, s2.x[0, :] + s2.x[0, 0], s2.x[1, :] + s2.x[1, 0], label='Spring 2')
     nn.set(xlabel='time (s)', ylabel='x position (m)', zlabel='y position (m)', title='Spring Oscillation in two Dimensions')
-
 
     if save == 'y':
         plt.savefig(f'trials/trial_{num}/{num}_3d_traj.png')
@@ -67,13 +66,13 @@ def plot(s1, s2, t, save, num):
     plt.figure(num='Trajectory')
 
     top = plt.subplot(2, 1, 1, xlim=[0, t.time[-1]])
-    top.plot(t.time, s1.x[1, :] + s1.y0, label='Spring 1')
-    top.plot(t.time, s2.x[1, :] + s2.y0, label='Spring 2')
+    top.plot(t.time, s1.x[1, :] + s1.x[1, 0], label='Spring 1')
+    top.plot(t.time, s2.x[1, :] + s2.x[1, 0], label='Spring 2')
     top.set(ylabel='y position (m)', title='Spring Oscillation in two Dimensions')
 
     b = plt.subplot(2, 1, 2, xlim=[0, t.time[-1]])
-    b.plot(t.time, s1.x[0, :] + s1.x0, label='Spring 1')
-    b.plot(t.time, s2.x[0, :] + s2.x0, label='Spring 2')
+    b.plot(t.time, s1.x[0, :] + s1.x[0, 0], label='Spring 1')
+    b.plot(t.time, s2.x[0, :] + s2.x[0, 0], label='Spring 2')
     b.set(ylabel='x position (m)', xlabel='time (s)')
 
     plt.figtext(.022, .025, f' dt = {t.dt} s\n%ΔE = {t.delta_e} %')

@@ -37,8 +37,6 @@ def select_scenario(set_vec):
     if set_vec[5] == 'n':
         # time input
         sec = s.simulation_time()
-        # calculate spring length
-        inc1, inc2 = calc.calc_length(inc1, inc2)
         # create objects/data
         s1, s2, t = spring.Spring(inc1), spring.Spring(inc2), spring.Time(sec, set_vec[0])
         # gets and appends num

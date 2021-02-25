@@ -10,8 +10,6 @@ class Spring:
         self.m = inc[1]
         self.k = inc[2]
         self.len = inc[7]
-        self.x0 = inc[5]
-        self.y0 = inc[6]
         self.v = array(([inc[3]], [inc[4]]))
         self.x = array(([inc[5]], [inc[6]]))
 
@@ -33,7 +31,6 @@ class Time:
 
     def __str__(self):
         """A string describing the object"""
-        #self.delta_e = '%.3f' % self.delta_e
         return f'%ΔE = {self.delta_e} %'
 
 
